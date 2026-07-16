@@ -9,8 +9,9 @@ use Illuminate\View\View;
 
 class ProductApiController extends Controller
 {
-    public function index(ProductService $productApi): View
+    public function index(): View
     {
+        $productApi = app(ProductService::class);
         $viewData['products'] = $productApi->getProducts();
         $viewData['categories'] = Category::all();
         $viewData['title'] = __('controller.titles.online_store');

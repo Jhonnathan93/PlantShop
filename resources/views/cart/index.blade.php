@@ -42,14 +42,23 @@
                 <a class="btn btn-outline-secondary mb-2"><b>{{ __('app.total_to_pay') }}</b>{{ $viewData["total"] }}</a>
                 @if ($viewData['notEnoughBalance'])
                 <a class="btn btn-outline-secondary mb-2"><b>{{ __('app.not_enough_balance') }}</b></a>
-                <a href="{{ route('cart.delete') }}" class="btn bg-danger text-white mb-2">{{ __('app.remove_all_plants_from_cart') }}</a>
+                <form action="{{ route('cart.delete') }}" method="POST"><!-- cart mutations must not use GET -->
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn bg-danger text-white mb-2">{{ __('app.remove_all_plants_from_cart') }}</button>
+                </form>
                 @else
                     @if (count($viewData["plants"]) > 0)
-                    <form action="{{ route('cart.purchase') }}" class="d-flex" role="search">
+                    <form action="{{ route('cart.purchase') }}" method="POST" class="d-flex" role="search">
+                        @csrf
                         <input name="address" class="form-control me-2" type="search" placeholder="{{ __('app.address') }}">
                         <button type="submit" class="btn bg-primary text-white">{{ __('app.purchase') }}</button>
                     </form>
-                    <a href="{{ route('cart.delete') }}" class="btn bg-danger text-white mb-2">{{ __('app.remove_all_plants_from_cart') }}</a>
+                    <form action="{{ route('cart.delete') }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn bg-danger text-white mb-2">{{ __('app.remove_all_plants_from_cart') }}</button>
+                    </form>
                     @endif
                 @endif
             </div>

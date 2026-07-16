@@ -3,22 +3,26 @@
 namespace App\Util;
 
 use App\Interfaces\OrdersReport;
+use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
+use JsonException;
 
 class OrdersReportJson implements OrdersReport
 {
     public function store(string $json): string
     {
-        $decodedData = json_decode($json);
-
-        if ($decodedData === null && json_last_error() !== JSON_ERROR_NONE) {
-            return 'Error: JSON inválido';
+        try {
+            $formattedJson = json_encode(
+                json_decode($json, true, 512, JSON_THROW_ON_ERROR),
+                JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR
+            );
+        } catch (JsonException $exception) {
+            throw new InvalidArgumentException('Invalid report data.', 0, $exception);
         }
 
-        $formattedJson = json_encode($decodedData, JSON_PRETTY_PRINT);
+        $path = 'reports/orders-'.now()->format('YmdHisv').'.json';
+        Storage::disk('public')->put($path, $formattedJson);
 
-        $filePath = storage_path('app/public/reports/report.json');
-        file_put_contents($filePath, $formattedJson);
-
-        return $filePath;
+        return Storage::disk('public')->path($path);
     }
 }

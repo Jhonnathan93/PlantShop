@@ -12,7 +12,7 @@ use Illuminate\View\View;
 
 class AdminGuideController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $guides = Guide::all();
 
@@ -52,10 +52,7 @@ class AdminGuideController extends Controller
 
         if ($request->hasFile('image')) {
             $imageName = $guide->getId().'.'.$request->file('image')->extension();
-            Storage::disk('publicGuides')->put(
-                $imageName,
-                file_get_contents($request->file('image')->getRealPath())
-            );
+            Storage::disk('publicGuides')->putFileAs('', $request->file('image'), $imageName);
             $guide->setImage($imageName);
             $guide->save();
         }
@@ -67,15 +64,9 @@ class AdminGuideController extends Controller
 
     public function delete(string $id): RedirectResponse
     {
-        Guide::destroy($id);
-
-        Session::flash('success', __('controller.guide.deleted_successfully'));
-
-        $guides = Guide::all();
-
-        $viewData = [];
-        $viewData['title'] = __('controller.guides.manage');
-        $viewData['guides'] = $guides;
+        $guide = Guide::findOrFail($id);
+        Storage::disk('publicGuides')->delete($guide->getImage());
+        $guide->delete();
 
         Session::flash('danger', __('controller.guide.deleted_successfully'));
 
@@ -98,19 +89,15 @@ class AdminGuideController extends Controller
         Guide::validate($request);
 
         $guide = Guide::findOrFail($id);
-        $guide->setTitle(request()->input('title'));
-        $guide->setContent(request()->input('content'));
+        $guide->setTitle($request->input('title'));
+        $guide->setContent($request->input('content'));
         $guide->save();
 
         if ($request->hasFile('image')) {
             $imageName = 'guide'.$guide->getId().'.'.$request->file('image')->extension();
 
-            Storage::disk('publicGuide')->delete($guide->getImage());
-
-            Storage::disk('publicGuide')->put(
-                $imageName,
-                file_get_contents($request->file('image')->getRealPath())
-            );
+            Storage::disk('publicGuides')->delete($guide->getImage());
+            Storage::disk('publicGuides')->putFileAs('', $request->file('image'), $imageName);
 
             $guide->setImage($imageName);
         }

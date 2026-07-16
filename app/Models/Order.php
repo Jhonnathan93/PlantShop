@@ -93,7 +93,7 @@ class Order extends Model
 
     public function setUpdatedAt($UpdatedAt): void
     {
-        $this->attributes['created_at'] = $UpdatedAt;
+        $this->attributes['updated_at'] = $UpdatedAt;
     }
 
     public function user(): BelongsTo

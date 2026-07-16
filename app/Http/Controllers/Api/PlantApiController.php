@@ -11,14 +11,14 @@ class PlantApiController extends Controller
 {
     public function index(): JsonResponse
     {
-        $plants = PlantResource::collection(Plant::all());
+        $plants = PlantResource::collection(Plant::query()->with('category')->get());
 
         return response()->json($plants, 200);
     }
 
     public function show(string $id): JsonResponse
     {
-        $plant = new PlantResource(Plant::findOrFail($id));
+        $plant = new PlantResource(Plant::query()->with('category')->findOrFail($id));
 
         return response()->json($plant, 200);
     }

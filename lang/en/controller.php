@@ -58,4 +58,7 @@ return [
     'search_results' => 'Search Results',
     'search_results_for' => 'Search Results for: :search',
 
+    'cart_contains_unavailable_plants' => 'Your cart contains unavailable plants.',
+    'not_enough_balance' => 'Your balance is insufficient for this purchase.',
+    'insufficient_stock' => 'There is not enough stock for :plant.',
 ];

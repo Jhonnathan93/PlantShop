@@ -10,5 +10,4 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/reviews/save', 'App\Http\Controllers\ReviewController@save')->name('review.save');
 
-    Route::get('/cart/purchase', 'App\Http\Controllers\CartController@purchase')->name('cart.purchase');
 });

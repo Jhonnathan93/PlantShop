@@ -50,7 +50,7 @@ class PlantController extends Controller
     {
         $plant = Plant::findOrFail($id);
         $viewData = [];
-        $viewData['title'] = __('controller_colon_formatted.title', ['title' => $plant->getName()]);
+        $viewData['title'] = __('controller.colon_formatted.title', ['title' => $plant->getName()]);
         $viewData['subtitle'] = __('controller.colon_formatted.plant_information', ['plant' => $plant->getName()]);
         $viewData['plant'] = $plant;
         $viewData['reviews'] = Review::where('plant_id', $id)->get();

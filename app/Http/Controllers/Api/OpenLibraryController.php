@@ -11,19 +11,13 @@ use Illuminate\View\View;
 
 class OpenLibraryController extends Controller
 {
-    protected $bookService;
-
-    public function __construct(BookService $bookService)
-    {
-        $this->bookService = $bookService;
-    }
-
     public function index(Request $request): View
     {
         $currentPage = $request->input('page', 1);
         $perPage = 12;
 
-        $booksData = $this->bookService->fetchBooks($perPage, $currentPage);
+        $bookService = app(BookService::class);
+        $booksData = $bookService->fetchBooks($perPage, $currentPage);
 
         $viewData = [];
         $viewData['title'] = __('controller.colon_formatted.title', ['title' => 'Books']);

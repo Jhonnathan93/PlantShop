@@ -5,10 +5,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Item;
-use App\Models\Order;
 use App\Models\Plant;
-use App\Models\User;
+use App\Services\CheckoutService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,12 +32,8 @@ class CartController extends Controller
         $viewData['plants'] = $plantsInCart;
         $viewData['categories'] = Category::all();
 
-        $userBalance = User::findOrFail(Auth::user()->getId())->getBalance();
-        if ($total != 0 && $userBalance < $total) {
-            $viewData['notEnoughBalance'] = true;
-        } else {
-            $viewData['notEnoughBalance'] = false;
-        }
+        $userBalance = Auth::user()?->getBalance();
+        $viewData['notEnoughBalance'] = $total !== 0 && ($userBalance === null || $userBalance < $total);
         $viewData['breadcrumbs'] = [
             ['title' => __('controller.home'), 'url' => route('home.index')],
             ['title' => __('controller.shopping_cart'), 'url' => route('cart.index')],
@@ -48,10 +42,18 @@ class CartController extends Controller
         return view('cart.index')->with('viewData', $viewData);
     }
 
-    public function add(Request $request, $id): RedirectResponse
+    public function add(Request $request, string $id): RedirectResponse
     {
-        $plants = $request->session()->get('plants');
-        $plants[$id] = $request->input('quantity');
+        $request->validate(['quantity' => ['required', 'integer', 'min:1']]);
+        $plant = Plant::findOrFail($id);
+        $quantity = (int) $request->input('quantity');
+
+        if ($quantity > $plant->getStock()) {
+            return back()->withErrors(['quantity' => __('controller.insufficient_stock', ['plant' => $plant->getName()])]);
+        }
+
+        $plants = $request->session()->get('plants', []);
+        $plants[$id] = $quantity;
         $request->session()->put('plants', $plants);
 
         return redirect()->route('cart.index');
@@ -64,46 +66,13 @@ class CartController extends Controller
         return redirect()->route('cart.index');
     }
 
-    public function purchase(Request $request): View|RedirectResponse
+    public function purchase(Request $request, CheckoutService $checkoutService): View|RedirectResponse
     {
-        Order::validate($request);
+        $request->validate(['address' => ['required', 'string', 'max:255']]);
+        $plantsInSession = $request->session()->get('plants', []);
 
-        $plantsInSession = $request->session()->get('plants');
-
-        if ($plantsInSession) {
-
-            $userId = Auth::user()->getId();
-
-            $order = new Order();
-            $order->setUserId($userId);
-            $order->setTotal(0);
-            $order->setAddress($request->input('address'));
-            $order->save();
-
-            $total = 0;
-            $plantsInCart = Plant::findMany(array_keys($plantsInSession));
-
-            foreach ($plantsInCart as $plant) {
-                $quantity = $plantsInSession[$plant->getId()];
-                $item = new Item();
-                $item->setQuantity($quantity);
-
-                $plant->setStock($plant->getStock() - $quantity);
-
-                $item->setPrice($plant->getPrice());
-                $item->setPlantId($plant->getId());
-                $item->setOrderId($order->getId());
-                $item->save();
-                $total = $total + ($plant->getPrice() * $quantity);
-            }
-
-            $order->setTotal($total);
-            $order->save();
-
-            $newBalance = Auth::user()->getBalance() - $total;
-            Auth::user()->setBalance($newBalance);
-
-            Auth::user()->save();
+        if ($plantsInSession !== []) {
+            $order = $checkoutService->purchase(Auth::user(), $plantsInSession, $request->string('address')->toString());
             $request->session()->forget('plants');
 
             $viewData = [];
@@ -118,8 +87,8 @@ class CartController extends Controller
 
             return view('cart.purchase')->with('viewData', $viewData);
 
-        } else {
-            return redirect()->route('cart.index');
         }
+
+        return redirect()->route('cart.index');
     }
 }

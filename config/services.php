@@ -2,6 +2,10 @@
 
 return [
 
+    'products' => [
+        'url' => env('PRODUCTS_API_URL', 'https://devsport.talentosenv.tech/api/products'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

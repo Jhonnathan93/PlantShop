@@ -22,12 +22,12 @@ class Guide extends Model
         'image',
     ];
 
-    public static function validate(request $request): void
+    public static function validate(Request $request): void
     {
         $request->validate([
-            'title' => ['required'],
-            'content' => ['required'],
-            'image' => ['required'],
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
     }
 
@@ -78,7 +78,7 @@ class Guide extends Model
 
     public function setCreatedAt($createdAt): void
     {
-        $this->attributes['created_at'];
+        $this->attributes['created_at'] = $createdAt;
     }
 
     public function getUpdatedAt(): string

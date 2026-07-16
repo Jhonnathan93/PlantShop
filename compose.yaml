@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8080:80"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8080
+      APP_KEY: ${APP_KEY:-base64:QwYqXRnT9cMAJ2bPSqdZ9FKOzJ8yUJgPB3BqTqW4WZ4=}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: plantshop
+      DB_USERNAME: plantshop
+      DB_PASSWORD: plantshop
+      PRODUCTS_API_URL: ${PRODUCTS_API_URL:-https://devsport.talentosenv.tech/api/products}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - app-storage:/var/www/html/storage
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: plantshop
+      MYSQL_USER: plantshop
+      MYSQL_PASSWORD: plantshop
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  app-storage:
+  mysql-data:

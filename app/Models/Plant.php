@@ -38,18 +38,19 @@ class Plant extends Model
         'category_id',
     ];
 
-    public static function validate(request $request): void
+    public static function validate(Request $request): void
     {
         $request->validate([
-            'name' => ['required'],
-            'description' => ['required'],
-            'price' => ['required', 'numeric', 'gt:0'],
-            'stock' => ['required', 'numeric', 'gt:0'],
-            'category_id' => ['required'],
-        ], );
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'price' => ['required', 'integer', 'min:1'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'image' => ['nullable', 'image', 'max:2048'],
+        ]);
     }
 
-    public static function sumPricesByQuantities($plants, $plantsInSession)
+    public static function sumPricesByQuantities(Collection $plants, array $plantsInSession): int
     {
         $total = 0;
         foreach ($plants as $plant) {
@@ -159,7 +160,7 @@ class Plant extends Model
         return $this->attributes['category_id'];
     }
 
-    public function setCategoryId(string $categoryId): void
+    public function setCategoryId(int $categoryId): void
     {
         $this->attributes['category_id'] = $categoryId;
     }

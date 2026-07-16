@@ -31,10 +31,7 @@
                     <td>{{ $plant->getName() }}</td>
                     <td>{{ $plant->getStock() }}</td>
                     <td>
-                        <form action="{{ route('admin.plant.edit', ['id' => $plant->getId()]) }}" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <button type="submit" class="btn btn-primary"><span class="material-symbols-outlined">{{ __('admin.button_plant_edit') }}</span></button>
-                        </form>
+                        <a href="{{ route('admin.plant.edit', ['id' => $plant->getId()]) }}" class="btn btn-primary"><span class="material-symbols-outlined">{{ __('admin.button_plant_edit') }}</span></a>
                     </td>
                     <td><a href="{{ route('admin.plant.delete', ['id' => $plant->getId()]) }}"></a>
                         <form action="{{ route('admin.plant.delete', $plant->getId())}}" method="POST">

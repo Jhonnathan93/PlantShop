@@ -39,7 +39,7 @@ class AdminPlantController extends Controller
     {
         $viewData = [];
         $viewData['title'] = 'Create plant';
-        $viewData['categories'] = Category::All();
+        $viewData['categories'] = Category::all();
 
         return view('admin.plant.create')->with('viewData', $viewData);
     }
@@ -58,10 +58,7 @@ class AdminPlantController extends Controller
 
         if ($request->hasFile('image')) {
             $imageName = $plant->getId().'.'.$request->file('image')->extension();
-            Storage::disk('publicPlants')->put(
-                $imageName,
-                file_get_contents($request->file('image')->getRealPath())
-            );
+            Storage::disk('publicPlants')->putFileAs('', $request->file('image'), $imageName);
             $plant->setImage($imageName);
             $plant->save();
         }
@@ -73,16 +70,9 @@ class AdminPlantController extends Controller
 
     public function delete(string $id): RedirectResponse
     {
-        Storage::disk('public')->delete(Plant::findOrFail($id)->getImage());
-        Plant::destroy($id);
-
-        Session::flash('success', __('controller.plants.created_successfully'));
-
-        $plants = Plant::all();
-
-        $viewData = [];
-        $viewData['title'] = __('controller.plants.manage');
-        $viewData['plants'] = $plants;
+        $plant = Plant::findOrFail($id);
+        Storage::disk('publicPlants')->delete($plant->getImage());
+        $plant->delete();
 
         Session::flash('danger', __('controller.plants.deleted_successfully'));
 
@@ -108,21 +98,17 @@ class AdminPlantController extends Controller
         Plant::validate($request);
 
         $plant = Plant::findOrFail($id);
-        $plant->setName(request()->input('name'));
-        $plant->setDescription(request()->input('description'));
-        $plant->setPrice(request()->input('price'));
-        $plant->setStock(request()->input('stock'));
-        $plant->setCategoryId(request()->input('category_id'));
+        $plant->setName($request->input('name'));
+        $plant->setDescription($request->input('description'));
+        $plant->setPrice((int) $request->input('price'));
+        $plant->setStock((int) $request->input('stock'));
+        $plant->setCategoryId((int) $request->input('category_id'));
 
         if ($request->hasFile('image')) {
             $imageName = $plant->getId().'.'.$request->file('image')->extension();
 
-            Storage::disk('publicPlant')->delete($plant->getImage());
-
-            Storage::disk('publicPlant')->put(
-                $imageName,
-                file_get_contents($request->file('image')->getRealPath())
-            );
+            Storage::disk('publicPlants')->delete($plant->getImage());
+            Storage::disk('publicPlants')->putFileAs('', $request->file('image'), $imageName);
 
             $plant->setImage($imageName);
         }

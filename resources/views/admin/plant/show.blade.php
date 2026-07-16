@@ -19,11 +19,7 @@
         </div>
     </div>
     <div class="d-flex justify-content-center mt-4">
-        <form action="{{ route('admin.plant.edit', ['id' => $viewData["plant"]->getId()]) }}" method="post"
-            enctype="multipart/form-data">
-            @csrf
-            <button type="submit" class="btn btn-primary me-2">{{ __('admin.button_plant_edit') }}</button>
-        </form>
+        <a href="{{ route('admin.plant.edit', ['id' => $viewData["plant"]->getId()]) }}" class="btn btn-primary me-2">{{ __('admin.button_plant_edit') }}</a>
         <form action="{{ route('admin.plant.delete', $viewData['plant']->getId())}}" method="POST">
             @csrf
             @method('DELETE')

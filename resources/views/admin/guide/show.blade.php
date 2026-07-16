@@ -17,10 +17,7 @@
         </div>
     </div>
     <div class="d-flex justify-content-center mt-4">
-        <form action="{{ route('admin.guide.edit', ['id' => $viewData["guide"]->getId()]) }}" method="post" enctype="multipart/form-data">
-            @csrf
-            <button type="submit" class="btn btn-primary me-2">{{ __('admin.button_guide_edit') }}</button>
-        </form>
+        <a href="{{ route('admin.guide.edit', ['id' => $viewData["guide"]->getId()]) }}" class="btn btn-primary me-2">{{ __('admin.button_guide_edit') }}</a>
         <form action="{{ route('admin.guide.delete', $viewData['guide']->getId())}}" method="POST">
             @csrf
             @method('DELETE')

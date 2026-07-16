@@ -19,8 +19,9 @@
     </div>
 
     <div class='card-body'>
-        <form action="{{ route('admin.guide.update', ['id' => $viewData["guide"]->getId()]) }}" method="get" enctype="multipart/form-data">
+        <form action="{{ route('admin.guide.update', ['id' => $viewData["guide"]->getId()]) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <div class="mb-3">
                 <label class="form-label">{{ __('admin.table_header_guide_title') }}</label>
                 <input name="title" class="form-control" value="{{ $viewData["guide"]->getTitle() }}">

@@ -1,0 +1,10 @@
+.env
+.git
+.phpunit.cache
+node_modules
+public/build
+public/hot
+storage
+vendor
+bootstrap/cache/*
+!bootstrap/cache/.gitignore

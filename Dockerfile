@@ -1,22 +1,28 @@
-FROM php:8.1.4-apache
-RUN apt-get update -y && apt-get install -y openssl zip unzip git 
-RUN docker-php-ext-install pdo_mysql
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-COPY . /var/www/html
-COPY ./public/.htaccess /var/www/html/.htaccess
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
-RUN a2enmod rewrite
-WORKDIR /var/www/html
-RUN composer install \
-    --ignore-platform-reqs \
-    --no-interaction \
-    --no-plugins \
-    --no-scripts \
-    --prefer-dist
+FROM php:8.2-apache
 
-RUN php artisan key:generate
-RUN php artisan migrate
-RUN chmod -R 777 storage
-RUN a2enmod rewrite
-RUN service apache2 restart
-RUN php artisan db:seed
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git libonig-dev libpng-dev libzip-dev unzip \
+    && docker-php-ext-configure gd \
+    && docker-php-ext-install gd mbstring pdo_mysql zip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --no-scripts --prefer-dist --optimize-autoloader
+
+COPY . .
+COPY docker/entrypoint.sh /usr/local/bin/plantshop-entrypoint
+
+RUN composer dump-autoload --no-dev --optimize
+
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
+    && a2enmod rewrite \
+    && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod +x /usr/local/bin/plantshop-entrypoint
+
+ENTRYPOINT ["plantshop-entrypoint"]
+CMD ["apache2-foreground"]

@@ -23,6 +23,7 @@ class HomeController extends Controller
 
     public function locale(string $locale): RedirectResponse
     {
+        abort_unless(in_array($locale, config('languages'), true), 404);
         session(['locale' => $locale]);
 
         return redirect()->back()->withCookie('locale', $locale);
