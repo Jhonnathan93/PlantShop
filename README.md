@@ -1,163 +1,149 @@
-<h1 align="center">Garden of Eden</h1>
+# Garden of Eden
+
+Garden of Eden is a Laravel web application for discovering plants, browsing care guides, organizing plants by category, and managing a small shopping experience. It also includes book suggestions, an allied-products API integration, user accounts, reviews, carts, orders, and downloadable order reports.
+
+## Features
+
+- Plant catalog with search and sorting options.
+- Category pages and plant detail pages.
+- Plant care guides and external book recommendations.
+- User registration, authentication, reviews, carts, and checkout.
+- Order history with JSON and XLSX report downloads.
+- Admin area for plant and guide management.
+- English and Spanish interface.
+- Docker-based local environment with PHP, Apache, and MySQL.
+
+## Requirements
+
+For the Docker workflow, only [Docker Desktop](https://www.docker.com/products/docker-desktop/) is required.
+
+For a local installation without Docker, install:
+
+- PHP 8.2 or newer with `gd`, `mbstring`, `pdo_mysql`, and `zip` extensions.
+- Composer 2.
+- MySQL 8.0 or a compatible MySQL database.
+- Node.js 18+ and npm, only when rebuilding front-end assets.
+
+## Run with Docker
+
+1. Create the application environment file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   On PowerShell:
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+2. Build and start the application:
+
+   ```bash
+   docker compose up --build -d
+   ```
+
+3. Load the development data:
+
+   ```bash
+   docker compose exec app php artisan db:seed
+   ```
+
+4. Open [http://localhost:8080](http://localhost:8080).
+
+The container runs database migrations automatically when it starts. To reset the local database and load the seed data again, run:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+To stop the environment:
+
+```bash
+docker compose down
+```
+
+## Local installation
+
+1. Install PHP dependencies and prepare the environment:
+
+   ```bash
+   composer install
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+2. Configure the `DB_*` variables in `.env` for your local MySQL database.
+
+3. Create the database tables, seed sample content, and expose stored images:
+
+   ```bash
+   php artisan migrate --seed
+   php artisan storage:link
+   ```
+
+4. Start the server:
+
+   ```bash
+   php artisan serve
+   ```
+
+The application will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+## Configuration
+
+Copy `.env.example` instead of committing `.env`. It contains environment-specific credentials and API settings.
+
+The allied-products endpoint is configured through `PRODUCTS_API_URL`. Docker provides a default value, but it can be overridden in `.env` or in the shell before starting the containers.
+
+## Useful commands
+
+```bash
+# Run the test suite
+php artisan test
+
+# Check coding style
+./vendor/bin/pint --test
+
+# Apply coding style fixes
+./vendor/bin/pint
+
+# Build front-end assets when they are changed
+npm install
+npm run build
+```
 
 ## Dependencies
-This project relies on several dependencies that need to be installed before running. Make sure you have the following dependencies installed:
 
+The version constraints below are maintained in `composer.json` and `package.json`. Run `composer install` and `npm install` to install the locked dependency tree.
 
-PHP (8.2.12)
-Composer (2.6.6)
-MySQL or another compatible database
+### PHP runtime
 
-- **brick/math** v0.11.0
-- **carbonphp/carbon-doctrine-types** v2.1.0
-- **dflydev/dot-access-data** v3.0.2
-- **doctrine/inflector** v2.0.10
-- **doctrine/lexer** v3.0.1
-- **dragonmantank/cron-expression** v3.3.3
-- **egulias/email-validator** v4.0.2
-- **fakerphp/faker** v1.23.1
-- **filp/whoops** v2.15.4
-- **fruitcake/php-cors** v1.3.0
-- **graham-campbell/result-type** v1.1.2
-- **guzzlehttp/guzzle** v7.8.1
-- **guzzlehttp/promises** v2.0.2
-- **guzzlehttp/psr7** v2.6.2
-- **guzzlehttp/uri-template** v1.0.3
-- **hamcrest/hamcrest-php** v2.0.1
-- **laravel/framework** v10.46.0
-- **laravel/pint** v1.14.0
-- **laravel/prompts** v0.1.16
-- **laravel/sail** v1.28.1
-- **laravel/sanctum** v3.3.3
-- **laravel/serializable-closure** v1.3.3
-- **laravel/tinker** v2.9.0
-- **laravel/ui** v4.5.0
-- **league/commonmark** v2.4.2
-- **league/config** v1.2.0
-- **league/flysystem** v3.24.0
-- **league/flysystem-local** v3.23.1
-- **league/mime-type-detection** v1.15.0
-- **mockery/mockery** v1.6.7
-- **monolog/monolog** v3.5.0
-- **myclabs/deep-copy** v1.11.1
-- **nesbot/carbon** v2.72.3
-- **nette/schema** v1.3.0
-- **nette/utils** v4.0.4
-- **nikic/php-parser** v5.0.1
-- **nunomaduro/collision** v7.10.0
-- **nunomaduro/termwind** v1.15.1
-- **phar-io/manifest** v2.0.4
-- **phar-io/version** v3.2.1
-- **phpoption/phpoption** v1.9.2
-- **phpunit/php-code-coverage** v10.1.12
-- **phpunit/php-file-iterator** v4.1.0
-- **phpunit/php-invoker** v4.0.0
-- **phpunit/php-text-template** v3.0.1
-- **phpunit/php-timer** v6.0.0
-- **phpunit/phpunit** v10.5.11
-- **psr/clock** v1.0.0
-- **psr/container** v2.0.2
-- **psr/event-dispatcher** v1.0.0
-- **psr/http-client** v1.0.3
-- **psr/http-factory** v1.0.2
-- **psr/http-message** v2.0
-- **psr/log** v3.0.0
-- **psr/simple-cache** v3.0.0
-- **psy/psysh** v0.12.0
-- **ralouphie/getallheaders** v3.0.3
-- **ramsey/collection** v2.0.0
-- **ramsey/uuid** v4.7.5
-- **sebastian/cli-parser** v2.0.1
-- **sebastian/code-unit** v2.0.0
-- **sebastian/code-unit-reverse-lookup** v3.0.0
-- **sebastian/comparator** v5.0.1
-- **sebastian/complexity** v3.2.0
-- **sebastian/diff** v5.1.1
-- **sebastian/environment** v6.0.1
-- **sebastian/exporter** v5.1.2
-- **sebastian/global-state** v6.0.2
-- **sebastian/lines-of-code** v2.0.2
-- **sebastian/object-enumerator** v5.0.0
-- **sebastian/object-reflector** v3.0.0
-- **sebastian/recursion-context** v5.0.0
-- **sebastian/type** v4.0.0
-- **sebastian/version** v4.0.1
-- **spatie/backtrace** v1.5.3
-- **spatie/flare-client-php** v1.4.4
-- **spatie/ignition** v1.12.0
-- **spatie/laravel-ignition** v2.4.2
-- **symfony/console** v6.4.4
-- **symfony/css-selector** v7.0.3
-- **symfony/deprecation-contracts** v3.4.0
-- **symfony/error-handler** v6.4.4
-- **symfony/event-dispatcher** v7.0.3
-- **symfony/event-dispatcher-contracts** v3.4.0
-- **symfony/finder** v6.4.0
-- **symfony/http-foundation** v6.4.4
-- **symfony/http-kernel** v6.4.5
-- **symfony/mailer** v6.4.4
-- **symfony/mime** v6.4.3
-- **symfony/polyfill-ctype** v1.29.0
-- **symfony/polyfill-intl-grapheme** v1.29.0
-- **symfony/polyfill-intl-idn** v1.29.0
-- **symfony/polyfill-intl-normalizer** v1.29.0
-- **symfony/polyfill-mbstring** v1.29.0
-- **symfony/polyfill-php72** v1.29.0
-- **symfony/polyfill-php80** v1.29.0
-- **symfony/polyfill-php83** v1.29.0
-- **symfony/polyfill-uuid** v1.29.0
-- **symfony/process** v6.4.4
-- **symfony/routing** v6.4.5
-- **symfony/service-contracts** v3.4.1
-- **symfony/string** v7.0.4
-- **symfony/translation** v6.4.4
-- **symfony/translation-contracts** v3.4.1
-- **symfony/uid** v6.4.3
-- **symfony/var-dumper** v6.4.4
-- **symfony/yaml** v7.0.3
-- **theseer/tokenizer** v1.2.3
-- **tijsverkoyen/css-to-inline-styles** v2.2.7
-- **vlucas/phpdotenv** v5.6.0
-- **voku/portable-ascii** v2.0.1
-- **webmozart/assert** v1.11.0
+- `dompdf/dompdf` `^3.0`
+- `guzzlehttp/guzzle` `^7.2`
+- `jwilsson/spotify-web-api-php` `^6.0`
+- `laravel/framework` `^10.10`
+- `laravel/sanctum` `^3.3`
+- `laravel/tinker` `^2.8`
+- `laravel/ui` `^4.5`
+- `phpoffice/phpspreadsheet` `^2.1`
 
-These dependencies are essential for the project's functionality and should be kept up to date for security and compatibility reasons.
+### PHP development
 
-## Installation
-1. Clone the repository to your local machine.
-2. Navigate to the project directory in your terminal.
-3. Run `composer install` to install PHP dependencies.
-4. Copy the `.env.example` file to `.env` and configure your environment variables.
-5. Run `php artisan key:generate` to generate a new application key.
-6. Run `npm install` or `yarn install` to install JavaScript dependencies.
-7. Run `npm run dev` or `yarn dev` to compile front-end assets.
+- `fakerphp/faker` `^1.9.1`
+- `laravel/pint` `^1.0`
+- `laravel/sail` `^1.18`
+- `mockery/mockery` `^1.4.4`
+- `nunomaduro/collision` `^7.0`
+- `phpunit/phpunit` `^10.1`
+- `spatie/laravel-ignition` `^2.0`
 
-## Migrations
-Before running the application, you need to migrate the database schema:
-Run `php artisan migrate` to apply migrations and create database tables.
+### Front-end development
 
-## Database
-This project uses MySQL as the default database. Make sure you have MySQL installed and running on your machine.
-Configure your database connection details in the `.env` file:
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=your_database_name
-DB_USERNAME=your_database_username
-DB_PASSWORD=your_database_password
-```
-
-## Running the Server
-To start the development server, run the following command:
-```
-php artisan serve
-```
-This will start a development server at `http://127.0.0.1:8000`. You can access the application in your web browser at this URL.
-
-## Important Note
-The `.env` file contains sensitive information such as database credentials and API keys. It's essential to keep this file secure and not share it publicly. Make sure to add it to your `.gitignore` file to prevent it from being committed to version control systems.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- `@popperjs/core` `^2.11.6`
+- `axios` `^1.6.4`
+- `bootstrap` `^5.2.3`
+- `laravel-vite-plugin` `^1.0.0`
+- `sass` `^1.56.1`
+- `vite` `^5.0.0`
