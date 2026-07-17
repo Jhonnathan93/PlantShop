@@ -1,52 +1,38 @@
 @extends('layouts.app')
-@section('title', $viewData["title"])
-@section('subtitle', $viewData["subtitle"])
+@section('title', $viewData['title'])
+@section('subtitle', $viewData['subtitle'])
 @section('content')
-<div class="container">
-    @if (Session::has('success'))
-    <div class="alert alert-success" role="alert">
-        {{ Session::get('success') }}
-    </div>
+<div class="container feature-section pt-5">
+    @if ($errors->any())
+        <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
     @endif
-    @if (Session::has('danger'))
-    <div class="alert alert-danger" role="alert">
-        {{ Session::get('danger') }}
-    </div>
-    @endif
-
-    <form action="{{ route('plant.search') }}" method="GET" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="{{ __('app.search_plants') }}">
-            <button type="submit" class="btn btn-success">{{ __('app.button_search') }}</button>
-        </div>
-    </form>
-
-    <form action="{{ route('plant.index') }}" method="GET" class="mb-3">
-        <div class="input-group">
-            <select name="sort_by" class="form-select">
-                <option selected>{{ __('app.select_plants_filter') }}</option>
-                <option value="newest">{{ __('app.select_newest_to_oldest') }}</option>
-                <option value="oldest">{{ __('app.select_oldest_to_newest') }}</option>
-                <option value="price_high">{{ __('app.select_price_lower_to_higher') }}</option>
-                <option value="price_low">{{ __('app.select_price_higher_to_lower') }}</option>
+    <div class="catalog-toolbar">
+        <form id="plant-search-form" action="{{ route('plant.search') }}" method="GET">
+            <label class="visually-hidden" for="plant-catalog-search">{{ __('app.search_plants') }}</label>
+            <input id="plant-catalog-search" class="form-control" type="search" name="search" placeholder="{{ __('app.search_plants') }}">
+        </form>
+        <form action="{{ route('plant.index') }}" method="GET">
+            <label class="visually-hidden" for="plant-sort">{{ __('app.select_plants_filter') }}</label>
+            <select id="plant-sort" name="sort_by" class="form-select" onchange="this.form.submit()">
+                <option value="" @selected(request('sort_by') === null || request('sort_by') === '')>{{ __('app.select_plants_filter') }}</option>
+                <option value="newest" @selected(request('sort_by') === 'newest')>{{ __('app.select_newest_to_oldest') }}</option>
+                <option value="oldest" @selected(request('sort_by') === 'oldest')>{{ __('app.select_oldest_to_newest') }}</option>
+                <option value="price_high" @selected(request('sort_by') === 'price_high')>{{ __('app.select_price_higher_to_lower') }}</option>
+                <option value="price_low" @selected(request('sort_by') === 'price_low')>{{ __('app.select_price_lower_to_higher') }}</option>
             </select>
-            <button type="submit" class="btn btn-success">{{ __('app.apply_filter') }}</button>
-        </div>
-    </form>
-
-    <div class="row">
-        @foreach ($viewData["plants"] as $plant)
-        <div class="col-md-4 col-lg-3 mb-2">
-            <div class="card">
-                <img src="{{ asset('/storage/plants/' . $plant->getImage()) }}" class="card-img-top img-card">
-                <div class="card-body text-center">
-                    <h5>Product id: {{ $plant->getId() }}</h4>
-                    <h6>{{ $plant->getName() }}</h5>
-                    <a href="{{ route('plant.show', ['id'=> $plant->getId()]) }}" class="btn bg-primary text-white">{{ __('app.more_details') }}</a>
-                </div>
+        </form>
+        <button form="plant-search-form" class="btn btn-primary" type="submit">{{ __('app.button_search') }}</button>
+    </div>
+    <div class="row g-4">
+        @forelse ($viewData['plants'] as $plant)
+            <div class="col-sm-6 col-lg-3">
+                <x-catalog-card :title="$plant->getName()" :image="asset('storage/plants/'.$plant->getImage())" :href="route('plant.show', ['id' => $plant->getId()])" :action="__('app.more_details')" :eyebrow="'$'.$plant->getPrice()">
+                    <p>{{ Str::limit($plant->getDescription(), 92) }}</p>
+                </x-catalog-card>
             </div>
-        </div>
-        @endforeach
+        @empty
+            <div class="col-12"><div class="empty-state">{{ __('app.no_plants_for_this_category') }}</div></div>
+        @endforelse
     </div>
 </div>
 @endsection

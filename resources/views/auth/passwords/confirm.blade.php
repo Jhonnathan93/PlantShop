@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container auth-page">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('passwords.confirm_title') }}</div>
+            <div class="auth-card">
+                <div class="auth-card__header">{{ __('passwords.confirm_title') }}</div>
 
-                <div class="card-body">
+                <div class="auth-card__body">
                     {{ __('passwords.confirm_description') }}
 
                     <form method="POST" action="{{ route('passwords.confirm') }}">

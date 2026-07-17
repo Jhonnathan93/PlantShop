@@ -30,6 +30,7 @@ class CategoryController extends Controller
         $viewData = [];
         $viewData['title'] = __('controller.colon_formatted_category', ['category' => $category->getName()]);
         $viewData['subtitle'] = __('controller.colon_formatted.category_plants', ['category' => $category->getName()]);
+        $viewData['category'] = $category;
         $viewData['plants'] = $plants;
         $viewData['categories'] = Category::all();
         $viewData['breadcrumbs'] = [

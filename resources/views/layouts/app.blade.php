@@ -1,53 +1,29 @@
 <!doctype html>
-<html lang='en'>
-
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset='utf-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1' />
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17382a">
     <title>@yield('title', 'Garden of Eden')</title>
-
-    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css' rel='stylesheet'crossorigin='anonymous' />
-    <link href='{{ asset('/css/app.css') }}' rel='stylesheet' />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Questrial&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
+<body class="app-shell">
+    @include('partials.navbar')
 
+    @unless (View::hasSection('hidePageHeader'))
+        <x-page-header :title="trim($__env->yieldContent('subtitle', 'Garden of Eden'))" :breadcrumbs="$viewData['breadcrumbs'] ?? []" />
+    @endunless
 
-<body>
-  
-    <div id='container'>
-        @include('partials/navbar')
+    <main id="main-content" class="site-main">
+        @yield('content')
+    </main>
 
-        <header class='masthead bg-primary text-white text-center py-4'>
-            <div class='container d-flex align-items-center flex-column'>
-                <h2><b><i>@yield('subtitle', 'Garden Of Eden')</i></b></h2>
-                
-                @if(isset($viewData['breadcrumbs']))
-                    <nav class="breadcrump" aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            @foreach($viewData['breadcrumbs'] as $breadcrumb)
-                                <li class="breadcrumb-item">
-                                    <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['title'] }}</a>
-                                </li>
-                            @endforeach
-                            <li class="breadcrumb-item active" aria-current="page">@yield('breadcrumb_current')</li>
-                        </ol>
-                    </nav>
-                @endif
-
-            </div>
-        </header>
-
-        <div id='content' class="p-4">
-            @yield('content')
-        </div>
-
-    </div>
-
-    <footer>@include('partials/footer')</footer>
-
-    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js'
-        crossorigin='anonymous'></script>
-
+    @include('partials.footer')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

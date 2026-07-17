@@ -1,35 +1,37 @@
-<!-- Made by: Santiago Neusa Ruiz -->
-
 @extends('layouts.app')
-@section('title', $viewData["subtitle"])
-@section('subtitle', $viewData["subtitle"])
+@section('title', $viewData['title'])
+@section('hidePageHeader', true)
 @section('content')
-<div class="row row-cols-1 row-cols-md-3 align-items-center">
-    <div class="card m-2" style="width: 492px;">
-        <img class="card-img-top img-fluid" src="{{ asset('/img/cards/plant.jpg') }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ __('app.plants') }}</h5>
-            <p class="card-text">{{ __('app.card_plants_available') }}</p>
-            <a href="{{ route('plant.index') }}" class="btn btn-success">{{ __('app.view_plants') }}</a>
+<section class="hero">
+    <div class="container hero__inner">
+        <div class="hero__content">
+            <span class="eyebrow">{{ __('app.redesign.hero_eyebrow') }}</span>
+            <h1 class="hero__title">{!! __('app.redesign.hero_title') !!}</h1>
+            <p class="hero__copy">{{ __('app.redesign.hero_copy') }}</p>
+            <div class="hero__actions">
+                <a href="{{ route('plant.index') }}" class="btn btn-primary">{{ __('app.view_plants') }}</a>
+                <a href="{{ route('guide.index') }}" class="btn btn-outline-primary">{{ __('app.view_guides') }}</a>
+            </div>
         </div>
+        <aside class="hero__note" aria-label="{{ __('app.redesign.featured_collection') }}">
+            <span>{{ __('app.redesign.weekly_edit') }}</span>
+            <strong>{!! __('app.redesign.indoor_sanctuary') !!}</strong>
+            <p>{{ __('app.redesign.indoor_copy') }}</p>
+        </aside>
     </div>
+</section>
 
-    <div class="card m-2" style="width: 525px;">
-        <img class="card-img-top img-fluid" src="{{ asset('/img/cards/category.jpg') }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ __('app.category') }}</h5>
-            <p class="card-text">{{ __('app.card_categories_available') }}</p>
-            <a href="{{ route('category.index') }}" class="btn btn-success">{{ __('app.view_categories') }}</a>
+<section class="feature-section">
+    <div class="container">
+        <div class="section-heading">
+            <div><span class="eyebrow">{{ __('app.redesign.explore_garden') }}</span><h2 class="section-title">{!! __('app.redesign.section_title') !!}</h2></div>
+            <p class="section-copy">{{ __('app.redesign.section_copy') }}</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4"><x-catalog-card :title="__('app.plants')" :image="asset('img/cards/plant.jpg')" :href="route('plant.index')" :action="__('app.view_plants')"><p>{{ __('app.card_plants_available') }}</p></x-catalog-card></div>
+            <div class="col-md-4"><x-catalog-card :title="__('app.categories')" :image="asset('img/cards/category.jpg')" :href="route('category.index')" :action="__('app.view_categories')"><p>{{ __('app.card_categories_available') }}</p></x-catalog-card></div>
+            <div class="col-md-4"><x-catalog-card :title="__('app.guides')" :image="asset('img/cards/guide.png')" :href="route('guide.index')" :action="__('app.view_guides')"><p>{{ __('app.card_guides_available') }}</p></x-catalog-card></div>
         </div>
     </div>
-
-    <div class="card m-2" style="width: 380px; height: 542px;">
-        <img class="card-img-top img-fluid" src="{{ asset('/img/cards/guide.png') }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ __('app.guides') }}</h5>
-            <p class="card-text">{{ __('app.card_guides_available') }}</p>
-            <a href="{{ route('guide.index') }}" class="btn btn-success">{{ __('app.view_guides') }}</a>
-        </div>
-    </div>
-</div>
+</section>
 @endsection

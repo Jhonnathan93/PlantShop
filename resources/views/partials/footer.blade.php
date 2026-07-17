@@ -1,39 +1,20 @@
-<footer class="text-center text-white" style="background-color: #25a55f">
-
-    <div class="container">
-        <section class="mt-3">
-            <div class="row text-center d-flex justify-content-center pt-5">
-                <div class="col-md-2">
-                    <h6 class="text-uppercase font-weight-bold">
-                        <a href="{{ route('home.index') }}" class="text-white">{{ __('app.home') }}</a>
-                    </h6>
-                </div>
-
-                <div class="col-md-2">
-                    <h6 class="text-uppercase font-weight-bold">
-                        <a href="{{ route('plant.index') }}" class="text-white">{{ __('app.plants') }}</a>
-                    </h6>
-                </div>
-
-                <div class="col-md-2">
-                    <h6 class="text-uppercase font-weight-bold">
-                        <a href="{{ route('guide.index') }}" class="text-white">{{ __('app.guides') }}</a>
-                    </h6>
-                </div>
-        </section>
-
-        <hr class="my-5" />
-
-        <section class="mb-5">
-            <div class="row d-flex justify-content-center">
-                <div class="col-lg-8">
-                    <h1>{{ __('controller.titles.garden_of_eden') }}</h1>
-                </div>
-            </div>
-        </section>
-
+<footer class="site-footer">
+    <div class="container site-footer__grid">
+        <div>
+            <a class="site-brand site-brand--footer" href="{{ route('home.index') }}"><span class="site-brand__mark">G</span><span>Garden of Eden</span></a>
+            <p>{{ __('app.redesign.footer_copy') }}</p>
+        </div>
+        <div>
+            <span class="eyebrow">{{ __('app.redesign.explore') }}</span>
+            <a href="{{ route('plant.index') }}">{{ __('app.plants') }}</a>
+            <a href="{{ route('category.index') }}">{{ __('app.categories') }}</a>
+            <a href="{{ route('guide.index') }}">{{ __('app.guides') }}</a>
+        </div>
+        <div>
+            <span class="eyebrow">{{ __('app.redesign.resources') }}</span>
+            <a href="{{ route('books.index') }}">{{ __('app.books') }}</a>
+            <a href="{{ route('product.index') }}">{{ __('app.allied_store') }}</a>
+        </div>
     </div>
-
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">{{ __('admin.copyright') }}{{ __('admin.names') }}</div>
-
+    <div class="container site-footer__bottom">© {{ now()->year }} Garden of Eden</div>
 </footer>

@@ -48,7 +48,7 @@ class PlantController extends Controller
 
     public function show(string $id, Request $request): View
     {
-        $plant = Plant::findOrFail($id);
+        $plant = Plant::with('category')->findOrFail($id);
         $viewData = [];
         $viewData['title'] = __('controller.colon_formatted.title', ['title' => $plant->getName()]);
         $viewData['subtitle'] = __('controller.colon_formatted.plant_information', ['plant' => $plant->getName()]);

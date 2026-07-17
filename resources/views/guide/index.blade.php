@@ -1,20 +1,16 @@
 @extends('layouts.app')
-@section('title', $viewData["title"])
-@section('subtitle', $viewData["subtitle"])
+@section('title', $viewData['title'])
+@section('subtitle', $viewData['subtitle'])
 @section('content')
-<div class="row">
-    @foreach ($viewData["guides"] as $guide)
-    <div class="col-md-4 col-lg-3 mb-2">
-        <div class="card h-100">
-            <img src="{{ asset('/storage/guides/'.$guide->getImage()) }}" class="card-img-top img-card">
-            <div class="card-body text-center">
-                <h5>{{ $guide->getTitle() }}</h4>
-                <p>{{ Str::limit($guide->getContent(), 100) }}</p>
-                <br>
-                <a href="{{ route('guide.show', ['id'=> $guide->getId()]) }}" class="btn bg-primary text-white">{{ __('app.more_details') }}</a>
+<div class="container feature-section pt-5">
+    <div class="row g-4">
+        @foreach ($viewData['guides'] as $guide)
+            <div class="col-sm-6 col-lg-4">
+                <x-catalog-card :title="$guide->getTitle()" :image="asset('storage/guides/'.$guide->getImage())" :href="route('guide.show', ['id' => $guide->getId()])" :action="__('app.more_details')" :eyebrow="__('app.guides')">
+                    <p>{{ Str::limit($guide->getContent(), 115) }}</p>
+                </x-catalog-card>
             </div>
-        </div>
+        @endforeach
     </div>
-    @endforeach
 </div>
 @endsection
