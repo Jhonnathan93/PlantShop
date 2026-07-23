@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class OrdersReportXSLX implements OrdersReport
 {
-    public function store(string $json): string
+    public function getContent(string $json): string
     {
         try {
             $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
@@ -35,13 +35,25 @@ class OrdersReportXSLX implements OrdersReport
             }
         }
 
-        $directory = storage_path('app/public/reports');
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-        $filePath = $directory.'/orders-'.now()->format('YmdHisv').'.xlsx';
-        (new Xlsx($spreadsheet))->save($filePath);
+        ob_start();
+        (new Xlsx($spreadsheet))->save('php://output');
+        $content = ob_get_clean();
+        $spreadsheet->disconnectWorksheets();
 
-        return $filePath;
+        if ($content === false) {
+            throw new InvalidArgumentException('Unable to generate the XLSX report.');
+        }
+
+        return $content;
+    }
+
+    public function getFileName(): string
+    {
+        return 'orders-'.now()->format('YmdHisv').'.xlsx';
+    }
+
+    public function getMimeType(): string
+    {
+        return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
 }

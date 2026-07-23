@@ -3,13 +3,12 @@
 namespace App\Util;
 
 use App\Interfaces\OrdersReport;
-use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use JsonException;
 
 class OrdersReportJson implements OrdersReport
 {
-    public function store(string $json): string
+    public function getContent(string $json): string
     {
         try {
             $formattedJson = json_encode(
@@ -20,9 +19,16 @@ class OrdersReportJson implements OrdersReport
             throw new InvalidArgumentException('Invalid report data.', 0, $exception);
         }
 
-        $path = 'reports/orders-'.now()->format('YmdHisv').'.json';
-        Storage::disk('public')->put($path, $formattedJson);
+        return $formattedJson;
+    }
 
-        return Storage::disk('public')->path($path);
+    public function getFileName(): string
+    {
+        return 'orders-'.now()->format('YmdHisv').'.json';
+    }
+
+    public function getMimeType(): string
+    {
+        return 'application/json';
     }
 }

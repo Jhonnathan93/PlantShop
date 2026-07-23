@@ -71,6 +71,13 @@ class Guide extends Model
         $this->attributes['image'] = $image;
     }
 
+    public function getImageUrl(): string
+    {
+        return filter_var($this->getImage(), FILTER_VALIDATE_URL)
+            ? $this->getImage()
+            : asset('storage/guides/'.$this->getImage());
+    }
+
     public function getCreatedAt(): string
     {
         return $this->attributes['created_at'];

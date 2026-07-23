@@ -6,7 +6,7 @@
 </div>
 <div class="m-3 row">
     <div class="col-md-4">
-        <img src="{{ asset('/storage/plants/'.$viewData["plant"]->getImage()) }}" class="img-fluid rounded-start">
+        <img src="{{ $viewData['plant']->getImageUrl() }}" class="img-fluid rounded-start" alt="{{ $viewData['plant']->getName() }}">
     </div>
     <div class="col-md-8">
         <div class="card-body">

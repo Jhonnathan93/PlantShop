@@ -38,8 +38,14 @@ class UserController extends Controller
 
         $ordersJson = Order::query()->where('user_id', Auth::id())->get()->toJson();
         $report = app(OrdersReport::class, ['fileType' => $fileType]);
-        $pathToFile = $report->store($ordersJson);
+        $content = $report->getContent($ordersJson);
 
-        return response()->download($pathToFile)->deleteFileAfterSend();
+        return response()->streamDownload(
+            static function () use ($content): void {
+                echo $content;
+            },
+            $report->getFileName(),
+            ['Content-Type' => $report->getMimeType()]
+        );
     }
 }

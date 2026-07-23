@@ -3,16 +3,20 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Interfaces\MediaStorage;
 use App\Models\Category;
 use App\Models\Plant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdminPlantController extends Controller
 {
+    public function __construct(private readonly MediaStorage $mediaStorage)
+    {
+    }
+
     public function index(Request $request): View
     {
         $plants = Plant::all();
@@ -58,8 +62,7 @@ class AdminPlantController extends Controller
 
         if ($request->hasFile('image')) {
             $imageName = $plant->getId().'.'.$request->file('image')->extension();
-            Storage::disk('publicPlants')->putFileAs('', $request->file('image'), $imageName);
-            $plant->setImage($imageName);
+            $plant->setImage($this->mediaStorage->upload($request->file('image'), 'plants', $imageName));
             $plant->save();
         }
 
@@ -71,7 +74,7 @@ class AdminPlantController extends Controller
     public function delete(string $id): RedirectResponse
     {
         $plant = Plant::findOrFail($id);
-        Storage::disk('publicPlants')->delete($plant->getImage());
+        $this->mediaStorage->delete($plant->getImage(), 'plants');
         $plant->delete();
 
         Session::flash('danger', __('controller.plants.deleted_successfully'));
@@ -107,10 +110,8 @@ class AdminPlantController extends Controller
         if ($request->hasFile('image')) {
             $imageName = $plant->getId().'.'.$request->file('image')->extension();
 
-            Storage::disk('publicPlants')->delete($plant->getImage());
-            Storage::disk('publicPlants')->putFileAs('', $request->file('image'), $imageName);
-
-            $plant->setImage($imageName);
+            $this->mediaStorage->delete($plant->getImage(), 'plants');
+            $plant->setImage($this->mediaStorage->upload($request->file('image'), 'plants', $imageName));
         }
 
         $plant->save();

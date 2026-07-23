@@ -26,7 +26,7 @@
     <div class="row g-4">
         @forelse ($viewData['plants'] as $plant)
             <div class="col-sm-6 col-lg-3">
-                <x-catalog-card :title="$plant->getName()" :image="asset('storage/plants/'.$plant->getImage())" :href="route('plant.show', ['id' => $plant->getId()])" :action="__('app.more_details')" :eyebrow="'$'.$plant->getPrice()">
+                <x-catalog-card :title="$plant->getName()" :image="$plant->getImageUrl()" :href="route('plant.show', ['id' => $plant->getId()])" :action="__('app.more_details')" :eyebrow="'$'.$plant->getPrice()">
                     <p>{{ Str::limit($plant->getDescription(), 92) }}</p>
                 </x-catalog-card>
             </div>

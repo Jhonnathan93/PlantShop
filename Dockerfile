@@ -1,9 +1,9 @@
 FROM php:8.2-apache
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git libonig-dev libpng-dev libzip-dev unzip \
+    && apt-get install -y --no-install-recommends git libonig-dev libpng-dev libpq-dev libzip-dev unzip \
     && docker-php-ext-configure gd \
-    && docker-php-ext-install gd mbstring pdo_mysql zip \
+    && docker-php-ext-install gd mbstring pdo_mysql pdo_pgsql zip \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

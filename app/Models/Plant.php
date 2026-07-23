@@ -100,6 +100,13 @@ class Plant extends Model
         $this->attributes['image'] = $image;
     }
 
+    public function getImageUrl(): string
+    {
+        return filter_var($this->getImage(), FILTER_VALIDATE_URL)
+            ? $this->getImage()
+            : asset('storage/plants/'.$this->getImage());
+    }
+
     public function getPrice(): int
     {
         return $this->attributes['price'];

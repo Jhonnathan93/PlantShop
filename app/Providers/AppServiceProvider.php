@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Interfaces\MediaStorage;
 use App\Models\Category;
+use App\Services\MediaStorageService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 
@@ -13,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(MediaStorage::class, MediaStorageService::class);
     }
 
     /**

@@ -6,6 +6,12 @@ return [
         'url' => env('PRODUCTS_API_URL', 'https://devsport.talentosenv.tech/api/products'),
     ],
 
+    'supabase' => [
+        'url' => env('SUPABASE_URL'),
+        'secret_key' => env('SUPABASE_SECRET_KEY', env('SUPABASE_SERVICE_ROLE_KEY')),
+        'storage_bucket' => env('SUPABASE_STORAGE_BUCKET', 'plantshop'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

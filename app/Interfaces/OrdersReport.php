@@ -4,5 +4,9 @@ namespace App\Interfaces;
 
 interface OrdersReport
 {
-    public function store(string $Json): string;
+    public function getContent(string $json): string;
+
+    public function getFileName(): string;
+
+    public function getMimeType(): string;
 }

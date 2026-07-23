@@ -5,7 +5,7 @@
 <div class="container detail-section">
     <article class="detail-card guide-detail">
         <div class="detail-card__media">
-            <img src="{{ asset('storage/guides/'.$viewData['guide']->getImage()) }}" alt="{{ $viewData['guide']->getTitle() }}">
+            <img src="{{ $viewData['guide']->getImageUrl() }}" alt="{{ $viewData['guide']->getTitle() }}">
         </div>
         <div class="detail-card__content">
             <span class="eyebrow">{{ __('app.guides') }}</span>

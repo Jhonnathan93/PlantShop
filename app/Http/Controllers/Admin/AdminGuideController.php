@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Interfaces\MediaStorage;
 use App\Models\Guide;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdminGuideController extends Controller
 {
+    public function __construct(private readonly MediaStorage $mediaStorage)
+    {
+    }
+
     public function index(): View
     {
         $guides = Guide::all();
@@ -52,8 +56,7 @@ class AdminGuideController extends Controller
 
         if ($request->hasFile('image')) {
             $imageName = $guide->getId().'.'.$request->file('image')->extension();
-            Storage::disk('publicGuides')->putFileAs('', $request->file('image'), $imageName);
-            $guide->setImage($imageName);
+            $guide->setImage($this->mediaStorage->upload($request->file('image'), 'guides', $imageName));
             $guide->save();
         }
 
@@ -65,7 +68,7 @@ class AdminGuideController extends Controller
     public function delete(string $id): RedirectResponse
     {
         $guide = Guide::findOrFail($id);
-        Storage::disk('publicGuides')->delete($guide->getImage());
+        $this->mediaStorage->delete($guide->getImage(), 'guides');
         $guide->delete();
 
         Session::flash('danger', __('controller.guide.deleted_successfully'));
@@ -96,10 +99,8 @@ class AdminGuideController extends Controller
         if ($request->hasFile('image')) {
             $imageName = 'guide'.$guide->getId().'.'.$request->file('image')->extension();
 
-            Storage::disk('publicGuides')->delete($guide->getImage());
-            Storage::disk('publicGuides')->putFileAs('', $request->file('image'), $imageName);
-
-            $guide->setImage($imageName);
+            $this->mediaStorage->delete($guide->getImage(), 'guides');
+            $guide->setImage($this->mediaStorage->upload($request->file('image'), 'guides', $imageName));
         }
 
         $guide->save();

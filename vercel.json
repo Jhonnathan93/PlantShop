@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.6.2",
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.php"
+    }
+  ]
+}
